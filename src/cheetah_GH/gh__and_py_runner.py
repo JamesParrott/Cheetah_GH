@@ -23,7 +23,7 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
     when sending data back via sendto().
     """
 
-    quit_on = 'SDNA_GH_TESTS_FAILED'
+    quit_on = 'TESTS_FAILED'
 
     def handle(self):
         data = self.request[0].strip()
@@ -55,16 +55,16 @@ if __name__ == '__main__':
     test_gh_file_path = pathlib.Path(__file__).parent / "Rhino_8_API_tests.gh"
 
     # TODO:    Refactor all this block as:
-    # cheetah.run(test_gh_file_path, env = env, quit_on = 'SDNA_GH_TESTS_FAILED', protocol='UDP', host = '127.0.0.1', port=9999)
+    # cheetah.run(test_gh_file_path, env = env, quit_on = 'TESTS_FAILED', protocol='UDP', host = '127.0.0.1', port=9999)
 
     print(rf'Opening: {test_gh_file_path}')
     env = os.environ.copy()
     
     # Exit Rhino afterwards.
-    env['SDNA_GH_NON_INTERACTIVE'] = 'True'
+    env['CHEETAH_GH_NON_INTERACTIVE'] = 'True'
     
     # Number of Fuzz tests to run.
-    env['NUM_SDNA_GH_API_TESTS'] = sys.arg[1] if len(sys.argv) >= 2 else '5'
+    env['NUM_TESTS'] = sys.arg[1] if len(sys.argv) >= 2 else '5'
     
     #if test_gh_file_path.endswith('.gh'):
 
@@ -78,9 +78,9 @@ if __name__ == '__main__':
     print(f'{p.exitcode=}')
 
     # print(MyUDPHandler.last_output)
-    # print('SDNA_GH_TESTS_FAILED' in ''.join(MyUDPHandler.last_output)[-100:])
+    # print('TESTS_FAILED' in ''.join(MyUDPHandler.last_output)[-100:])
 
-    if result.returncode != 0 or p.exitcode: #'SDNA_GH_TESTS_FAILED' in ''.join(MyUDPHandler.last_output):
+    if result.returncode != 0 or p.exitcode: #'TESTS_FAILED' in ''.join(MyUDPHandler.last_output):
         raise Exception('Some tests were failed (or an error occurred during testing). \n'
                         f'Test runner retcode: {result.returncode}\n'
                         f'Test output server exitcode: {p.exitcode}\n'
