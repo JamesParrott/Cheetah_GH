@@ -138,14 +138,14 @@ def all_docs_comps():
 
 
 
-def get_plugin_files(plugin = ''):
+def get_plugin_files(plugin_name = ''):
 
     gh_comp_server = Grasshopper.Kernel.GH_ComponentServer()
     #print(list(gh_comp_server.FindObjects(guid)))
 
     return OrderedDict((os.path.splitext(file_.FileName)[0], file_)
                         for file_ in gh_comp_server.ExternalFiles(True, True)
-                        if plugin.lower() in file_.FilePath.lower()
+                        if plugin_name.lower() in file_.FilePath.lower()
                        )
 
 
@@ -157,12 +157,13 @@ def get_position(comp_number, row_width = 800, row_height = 175, pos = (200, 550
 
 def add_instance_of_userobject_to_canvas(
     name,
-    plugin_files,
-    plug,
+    plugin_files = None,
+    plugin_name = '',
     comp_number=1,
     pos = (200, 550),
     ):
     
+    plugin_files = plugin_files or get_plugin_files(plugin_name)
     
     file_obj = next((v
                      for k, v in plugin_files.items() 
@@ -215,10 +216,18 @@ def run_comp(comp, **kwargs):
            }
 
 
-def get_user_obj_comp_from_or_add_to_canvas(name):
+def get_user_obj_comp_from_or_add_to_canvas(
+    name,
+    plugin_files = None,
+    plugin_name = '',
+    ):
     
     if name not in GH_DOC_COMPONENTS:
-        comp = add_instance_of_userobject_to_canvas(name)
+        comp = add_instance_of_userobject_to_canvas(
+                            name,
+                            plugin_files,
+                            plugin_name
+                            )
         GH_DOC_COMPONENTS[name] = comp
 
     return GH_DOC_COMPONENTS[name]
