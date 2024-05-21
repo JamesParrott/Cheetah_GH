@@ -22,7 +22,8 @@ TMP = tempfile.gettempdir()
 
 DIR = os.path.join(TMP, 'Cheetah_GH')
 
-os.makedirs(DIR)
+if not os.path.isdir(DIR):
+    os.makedirs(DIR) 
 
 try:
     ghdoc
