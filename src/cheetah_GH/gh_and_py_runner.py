@@ -31,15 +31,14 @@ def start_UDP_server():
     with socketserver.UDPServer((HOST, PORT), MyUDPHandler) as server:
         server.serve_forever()
 
-
-if __name__ == '__main__':
+def main(args = sys.argv[1:]):
     p = multiprocessing.Process(target=start_UDP_server)
     p.daemon = True
     print('Starting output printing UDP server.  Press Ctrl+C to quit.')
     p.start()
 
 
-    gh_file_path = sys.argv[1]
+    gh_file_path = args[0]
 
     env = os.environ.copy()
 
@@ -48,7 +47,7 @@ if __name__ == '__main__':
 
 
     # Subsequent trailing command line args are env variable names and values.
-    other_args = iter(sys.argv[2:])
+    other_args = iter(args[1:])
     env.update(zip(other_args, other_args))
 
     
@@ -76,5 +75,8 @@ if __name__ == '__main__':
             f'Test output server exitcode: {p.exitcode}\n'
             )
 
+    return 0
 
-    sys.exit(0)
+
+if __name__ == '__main__':
+    sys.exit(main())
