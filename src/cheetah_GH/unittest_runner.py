@@ -1,6 +1,7 @@
 import os
 import sys
 import unittest
+import time
 import io
 
 from .helpers import FileAndStream, UDPStream, exit_Rhino
@@ -15,12 +16,16 @@ def run_unittest(output_stream = sys.stderr
     #type: [io.TextIOBase, str, unittest.TestSuite | (), str] -> unittest.TextTestResult
 
 
-    exit = False if os.getenv('CHEETAH_GH_NON_INTERACTIVE', '').lower() in ('', '0', 'false') else True
+    if os.getenv('CHEETAH_GH_NON_INTERACTIVE', '').lower() in ('', '0', 'false'):
+        exit = False 
+    else:
+        exit = True
 
 
-    output_stream.write('Exit Rhino after tests: %s (env var CHEETAH_GH_NON_INTERACTIVE)'
-                        % ('Yes' if exit else 'No')
-                        )
+    output_stream.write(
+        'Exit Rhino after tests: %s (env var CHEETAH_GH_NON_INTERACTIVE)'
+        % ('Yes' if exit else 'No')
+        )
 
     if not test_suite:
 
@@ -40,7 +45,7 @@ def run_unittest(output_stream = sys.stderr
         
         file_ = open(log_file,'at')
         output_stream = FileAndStream(
-                                    file_
+                                 file_
                                 ,output_stream
                                 ,print_too = output_stream is not sys.stderr
                                 )

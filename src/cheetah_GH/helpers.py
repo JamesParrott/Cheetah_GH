@@ -1,4 +1,3 @@
-
 #! /usr/bin/awk NR==3
 # -*- coding: utf-8 -*-
 # This module requires Grasshopper Python (Rhino3D)
@@ -6,28 +5,17 @@
 
 
 import os 
-import time
-import random
-import inspect
-import logging
 from collections import OrderedDict
-import unittest
 import ctypes
 import socket
 import tempfile
 
 import System
 
-import rhinoscriptsyntax as rs
-import scriptcontext as sc 
 import Rhino
 import Rhino.NodeInCode.Components
 import Grasshopper
 import rhinoscriptsyntax as rs
-import ghpythonlib.treehelpers as th
-from ghpythonlib.componentbase import executingcomponent as component 
-
-from ..custom.skel.basic.ghdoc import ghdoc
 
 
 TMP = tempfile.gettempdir()
@@ -38,6 +26,16 @@ for SUB_DIR in ( 'sDNA_GH', 'tests'):
     DIR = os.path.join(DIR, SUB_DIR)
     if not os.path.isdir(DIR):
         os.mkdir(DIR)
+
+try:
+    ghdoc
+except NameError:
+    import scriptcontext as sc
+
+    if sc.doc == Rhino.RhinoDoc.ActiveDoc:
+        raise Exception('Set sc.doc = ghdoc and run the component again.')
+
+    ghdoc = sc.doc
 
 GH_DOC = ghdoc.Component.Attributes.DocObject.OnPingDocument()
 
@@ -154,12 +152,17 @@ def get_plugin_files(plugin = ''):
 
 
 def get_position(comp_number, row_width = 800, row_height = 175, pos = (200, 550)):
-    l = comp_number * row_height
-    x = pos[0] + (l % row_width)
-    y = pos[1] + 220 * (l // row_width)
+    h = comp_number * row_height
+    x = pos[0] + (h % row_width)
+    y = pos[1] + 220 * (h // row_width)
     return x, y
 
-def add_instance_of_userobject_to_canvas(name, plugin_files = None, comp_number=1, pos = (200, 550)):
+def add_instance_of_userobject_to_canvas(
+    name,
+    plugin_files = None,
+    comp_number=1,
+    pos = (200, 550),
+    ):
     
     plugin_files = plugin_files or get_plugin_files('sDNA_GH')
     
@@ -185,7 +188,10 @@ def add_instance_of_userobject_to_canvas(name, plugin_files = None, comp_number=
     sizeF = System.Drawing.SizeF(*get_position(comp_number, pos=pos))
     
     
-    comp_obj.Attributes.Pivot = System.Drawing.PointF.Add(comp_obj.Attributes.Pivot, sizeF)
+    comp_obj.Attributes.Pivot = System.Drawing.PointF.Add(
+                                            comp_obj.Attributes.Pivot,
+                                            sizeF
+                                            )
     
     success = GH_DOC.AddObject(docObject = comp_obj, update = False)
     
@@ -296,11 +302,13 @@ def exit_Rhino():
 
 
 def make_callable_using_node_in_code(name):
-    func_info = Rhino.NodeInCode.Components.FindComponent(name);
+    func_info = Rhino.NodeInCode.Components.FindComponent(name)
     
     #    if (func_info == null) { Print("Error finding function"); return; }
     
     func = func_info.Delegate #as dynamic;
+
+    return func
 
 
     

@@ -10,16 +10,7 @@
 #Windows shortcuts
 *.lnk
 
-#Shapefiles
-*.shp
-*.dbf
-*.shx
-
-#sDNA
-*.names.csv
-
-# Gephi demo output
-make_gephi_edges_csv.csv
+.ruff_cache
 
 #Rhino lock file
 *.3dm.rhl
