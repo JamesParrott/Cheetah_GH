@@ -157,7 +157,7 @@ def get_position(comp_number, row_width = 800, row_height = 175, pos = (200, 550
 def add_instance_of_userobject_to_canvas(
     name,
     plugin_files,
-    plug
+    plug,
     comp_number=1,
     pos = (200, 550),
     ):
@@ -291,6 +291,8 @@ def exit_Rhino(save_3dm_to = None, save_to_dir = None):
     Rhino.RhinoDoc.ActiveDoc.Modified = False
 
     hWnd = Rhino.RhinoApp.MainWindowHandle()
+
+    # TODO:  Fix.  Doesn't skip save file screen anymore.
     ctypes.windll.user32.PostMessageW(hWnd, 0x0010, 0, 0) # - quits but doesn't set return code
     # ctypes.windll.user32.PostQuitMessage(ret_code) # - doesn't quit, even if Rhino doc saved.
     # ctypes.windll.user32.PostMessageW(hWnd, 0x0010, ret_code, 0) # - quits but doesn't set return code

@@ -6,32 +6,40 @@
 
 import os
 import sys
-import socketserver
-import multiprocessing
 import subprocess
 
 
 
 
-class MyUDPHandler(socketserver.BaseRequestHandler):
-
-    quit_on = 'TESTS_FAILED'
-
-    def handle(self):
-        data = self.request[0].strip()
-
-        output = data.decode('utf-8')
-        print(output)
-        if output == self.quit_on:
-            sys.exit(1)
-
 
 def start_UDP_server():
+    # socketserver is Python 3 only.  Don't import it in Python 2
+    import socketserver
+
+
+    class MyUDPHandler(socketserver.BaseRequestHandler):
+
+        quit_on = 'TESTS_FAILED'
+
+        def handle(self):
+            data = self.request[0].strip()
+
+            output = data.decode('utf-8')
+            print(output)
+            if output == self.quit_on:
+                sys.exit(1)
+
+
     HOST, PORT = "127.0.0.1", 9999
     with socketserver.UDPServer((HOST, PORT), MyUDPHandler) as server:
         server.serve_forever()
 
 def run_GH_file(gh_file, extra_env_vars):
+    
+    # multiprocessing is Python 3 only.  Don't import it in Python 2
+    import multiprocessing
+
+
     p = multiprocessing.Process(target=start_UDP_server)
     p.daemon = True
     print('Starting output printing UDP server.  Press Ctrl+C to quit.')
@@ -45,20 +53,22 @@ def run_GH_file(gh_file, extra_env_vars):
     env['CHEETAH_GH_NON_INTERACTIVE'] = 'True'
 
 
-    env.update()
+    env.update(extra_env_vars)
 
-    
-    
 
-    print(rf'Opening: {gh_file}')
+    print('Opening: %s' % gh_file)
 
-    result = subprocess.run(
-         ( r'"C:\Program Files\Rhino 8\System\Rhino.exe" /nosplash /runscript='
-          rf'"-_grasshopper _editor _load _document _open {gh_file} '
-           r'_enter _exit _enterend"'
-         )
-        ,env = env
-        )
+    command = ( 
+          r'"C:\Program Files\Rhino 8\System\Rhino.exe" /nosplash /runscript='
+          r'"-_grasshopper _editor _load _document _open %s ' % gh_file
+          )
+
+    if env['CHEETAH_GH_NON_INTERACTIVE'].lower() not in ('', '0', 'false'):
+        command += ' _enter _exit'
+    command += ' _enterend"'
+
+    result = subprocess.run(command, env=env, shell=True)
+
     p.terminate()
 
     return result, p.exitcode
@@ -78,15 +88,15 @@ def main(args = sys.argv[1:]):
 
     result, exitcode = run_GH_file(gh_file = gh_file, extra_env_vars = extra_env_vars)
 
-    print(f'{result.returncode=}')
-    print(f'{exitcode=}')
+    print('result.returncode=%s' % result.returncode)
+    print('exitcode=%s' % exitcode)
 
     if result.returncode != 0 or exitcode: 
         raise Exception(
-             'An error occurred while running: {gh_file}. \n'
-            f'Test runner retcode: {result.returncode}\n'
-            f'Test output server exitcode: {exitcode}\n'
-            )
+             'An error occurred while running: %s. \n'
+             'Test runner retcode: %s\n'
+             'Test output server exitcode: %s\n'
+            ) % (gh_file, result.returncode, exitcode)
     return 0
 
 
