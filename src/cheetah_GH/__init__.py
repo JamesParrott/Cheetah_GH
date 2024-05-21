@@ -1,1 +1,1 @@
-__version__ = '0.0.0'
+from .gh_and_py_runner import run_GH_file

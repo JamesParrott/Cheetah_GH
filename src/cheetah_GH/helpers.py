@@ -20,12 +20,9 @@ import rhinoscriptsyntax as rs
 
 TMP = tempfile.gettempdir()
 
-DIR = TMP
+DIR = os.path.join(TMP, 'Cheetah_GH')
 
-for SUB_DIR in ( 'sDNA_GH', 'tests'):
-    DIR = os.path.join(DIR, SUB_DIR)
-    if not os.path.isdir(DIR):
-        os.mkdir(DIR)
+os.makedirs(DIR)
 
 try:
     ghdoc
@@ -159,12 +156,12 @@ def get_position(comp_number, row_width = 800, row_height = 175, pos = (200, 550
 
 def add_instance_of_userobject_to_canvas(
     name,
-    plugin_files = None,
+    plugin_files,
+    plug
     comp_number=1,
     pos = (200, 550),
     ):
     
-    plugin_files = plugin_files or get_plugin_files('sDNA_GH')
     
     file_obj = next((v
                      for k, v in plugin_files.items() 
@@ -270,9 +267,11 @@ class UDPStream(object):
 
 
 
-def save_doc_to_(name = 'tmp_sDNA_GH_api_tests_working_file.3dm', dir_ = DIR):
+def save_doc_to_(name, dir_ = None):
     # 'Dale Fugier'
     # https://discourse.mcneel.com/t/sys-exit-shows-popup-window-instead-of-just-exiting/163811/7
+
+    dir_ = dir_ or DIR
 
     path = os.path.join(dir_, name) if dir_ else name
     rs.Command('_-SaveAs ' + path, True)
@@ -282,11 +281,13 @@ def save_doc_to_(name = 'tmp_sDNA_GH_api_tests_working_file.3dm', dir_ = DIR):
 
 
 
-def exit_Rhino():
+def exit_Rhino(save_3dm_to = None, save_to_dir = None):
     #'Dale Fugier'
     # https://discourse.mcneel.com/t/sys-exit-shows-popup-window-instead-of-just-exiting/163811/7
 
-    save_doc_to_()
+    if save_3dm_to:
+        save_doc_to_(name = save_3dm_to, dir_ = save_to_dir)
+
     Rhino.RhinoDoc.ActiveDoc.Modified = False
 
     hWnd = Rhino.RhinoApp.MainWindowHandle()
