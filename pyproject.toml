@@ -20,7 +20,7 @@ classifiers = [
 dependencies = []
 
 [project.scripts]
-cheetah_GH="Cheetah_GH.gh_and_py_runner:main"
+Cheetah_GH="Cheetah_GH.gh_and_py_runner:main"
 
 [project.urls]   
 "Homepage" = "https://github.com/JamesParrott/Cheetah_GH"
