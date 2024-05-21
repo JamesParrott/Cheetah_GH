@@ -31,14 +31,13 @@ def start_UDP_server():
     with socketserver.UDPServer((HOST, PORT), MyUDPHandler) as server:
         server.serve_forever()
 
-def main(args = sys.argv[1:]):
+def run_GH_file(gh_file, extra_env_vars):
     p = multiprocessing.Process(target=start_UDP_server)
     p.daemon = True
     print('Starting output printing UDP server.  Press Ctrl+C to quit.')
     p.start()
 
 
-    gh_file_path = args[0]
 
     env = os.environ.copy()
 
@@ -46,35 +45,48 @@ def main(args = sys.argv[1:]):
     env['CHEETAH_GH_NON_INTERACTIVE'] = 'True'
 
 
-    # Subsequent trailing command line args are env variable names and values.
-    other_args = iter(args[1:])
-    env.update(zip(other_args, other_args))
+    env.update()
 
     
     
 
-    print(rf'Opening: {gh_file_path}')
+    print(rf'Opening: {gh_file}')
 
     result = subprocess.run(
          ( r'"C:\Program Files\Rhino 8\System\Rhino.exe" /nosplash /runscript='
-          rf'"-_grasshopper _editor _load _document _open {gh_file_path} '
+          rf'"-_grasshopper _editor _load _document _open {gh_file} '
            r'_enter _exit _enterend"'
          )
         ,env = env
         )
     p.terminate()
 
+    return result, p.exitcode
+
+
+
+
+def main(args = sys.argv[1:]):
+
+
+    gh_file = args[0]
+    
+    # Subsequent trailing command line args are env variable names and values.
+    other_args = iter(args[1:])
+
+    extra_env_vars = dict(zip(other_args, other_args))
+
+    result, exitcode = run_GH_file(gh_file = gh_file, extra_env_vars = extra_env_vars)
+
     print(f'{result.returncode=}')
-    print(f'{p.exitcode=}')
+    print(f'{exitcode=}')
 
-
-    if result.returncode != 0 or p.exitcode: 
+    if result.returncode != 0 or exitcode: 
         raise Exception(
-             'Some tests were failed (or an error occurred during testing). \n'
+             'An error occurred while running: {gh_file}. \n'
             f'Test runner retcode: {result.returncode}\n'
-            f'Test output server exitcode: {p.exitcode}\n'
+            f'Test output server exitcode: {exitcode}\n'
             )
-
     return 0
 
 
