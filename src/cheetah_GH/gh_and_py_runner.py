@@ -92,11 +92,12 @@ def main(args = sys.argv[1:]):
     print('exitcode=%s' % exitcode)
 
     if result.returncode != 0 or exitcode: 
-        raise Exception(
-             'An error occurred while running: %s. \n'
-             'Test runner retcode: %s\n'
-             'Test output server exitcode: %s\n'
-            ) % (gh_file, result.returncode, exitcode)
+        raise Exception(('An error occurred while running: %s. \n'
+                         'Test runner retcode: %s\n'
+                         'Test output server exitcode: %s\n'
+                        )
+                        % (gh_file, result.returncode, exitcode)
+                       ) 
     return 0
 
 
