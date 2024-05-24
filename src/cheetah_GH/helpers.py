@@ -13,7 +13,10 @@ import tempfile
 import System
 
 import Rhino
-import Rhino.NodeInCode.Components
+try:
+    import Rhino.NodeInCode.Components
+except ImportError
+    import Rhino.NodeInCode
 import Grasshopper
 import rhinoscriptsyntax as rs
 
