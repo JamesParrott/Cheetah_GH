@@ -15,7 +15,7 @@ import System
 import Rhino
 try:
     import Rhino.NodeInCode.Components
-except ImportError
+except ImportError:
     import Rhino.NodeInCode
 import Grasshopper
 import rhinoscriptsyntax as rs
