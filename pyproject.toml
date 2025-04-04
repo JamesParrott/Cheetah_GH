@@ -3,8 +3,6 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 
-
-
 [project]
 name = "Cheetah_GH"
 version = "0.1.9"
@@ -17,6 +15,7 @@ license = {file = "LICENSE.md"}
 classifiers = [
     "Programming Language :: Python",
 ]
+
 dependencies = []
 
 [project.scripts]
@@ -26,5 +25,4 @@ Cheetah_GH="Cheetah_GH.gh_and_py_runner:main"
 "Homepage" = "https://github.com/JamesParrott/Cheetah_GH"
 "Bug Tracker" = "https://github.com/JamesParrott/Cheetah_GH/issues"
 
-[tool.hatch.build.targets.wheel]
-packages = ["src/Cheetah_GH"]
+
