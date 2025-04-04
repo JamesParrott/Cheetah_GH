@@ -25,3 +25,6 @@ Cheetah_GH="Cheetah_GH.gh_and_py_runner:main"
 [project.urls]   
 "Homepage" = "https://github.com/JamesParrott/Cheetah_GH"
 "Bug Tracker" = "https://github.com/JamesParrott/Cheetah_GH/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/Cheetah_GH"]
