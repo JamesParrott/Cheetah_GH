@@ -24,5 +24,10 @@ jobs:
       - name: Build sdist and wheel
         run: uv build
 
-      - name: Publish to PyPI
-        run: uv publish
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          path: dist/
+      # - name: Publish to PyPI
+      #   run: uv publish
