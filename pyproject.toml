@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "Cheetah_GH"
-version = "0.1.9"
+version = "0.1.10"
 authors = [{name = "James Parrott", email = "james.parrott@proton.me"}]
 description = "Runs Grasshopper components and stops Rhino from Python components. Optionally runs Rhino3D and Grasshopper from the command line."
 readme = {file = "README.md", content-type = "text/markdown"}
